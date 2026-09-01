@@ -1,9 +1,12 @@
 using System.Collections;
+using System.Timers;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class mchMovement : MonoBehaviour
 {
+    const float gravity = 250;
     [Header("WALKING")]
     public float maxSpeed;
     [SerializeField] private float curSpeed;
@@ -23,15 +26,46 @@ public class mchMovement : MonoBehaviour
     public bool _wantJump;
     public bool _isJump;
 
+    [Header("TIMERS")]
+    public float timeGround;
+    public float timeAir;
+
     private setKeybinds s;
     private Rigidbody r;
     private GameObject g;
+
+    const float minVel = .35f;
     
     private void Start()
     {
         this.s = GameObject.Find("s").GetComponent<setKeybinds>();
         this.r = gameObject.GetComponent<Rigidbody>();
         this.g = GameObject.Find("mchGroundCheck");
+
+        StartCoroutine(Timers());
+    }
+
+    private IEnumerator Timers()
+    {
+        while(true)
+        {
+            AddTime();
+            yield return null;
+        }        
+    }
+
+    private void AddTime()
+    {
+        if(_isGround)
+        {
+            timeGround += Time.deltaTime;
+            timeAir = 0;
+        }
+        else
+        {
+            timeAir += Time.deltaTime;
+            timeGround = 0;
+        }
     }
 
     private void Update()
@@ -44,8 +78,9 @@ public class mchMovement : MonoBehaviour
 
     private void StateChecker()
     {
-        this._isWalk = Mathf.Abs(this.r.linearVelocity.x) > .35 || Mathf.Abs(this.r.linearVelocity.z) > .35;
+        this._isWalk = Mathf.Abs(this.r.linearVelocity.x) > minVel || Mathf.Abs(this.r.linearVelocity.z) > minVel;
         this._isGround = this.g.GetComponent<uniGroundCheck>()._isGrounded;
+        this._isJump = this.jumpInt != 0;
     }
 
     private void MovementForIntCTRL()
@@ -102,21 +137,27 @@ public class mchMovement : MonoBehaviour
             if(t > .1f && this.r.linearVelocity.y == 0) break;
             yield return null;
         }
-        // if(t < this.maxJumpTime) this.r.linearVelocity.y /= 5; //fix later
         this.jumpInt = 0;
     }
 
     private void FixedUpdate()
     {
         AddRunForce();
+        AddGravity();
     }
 
     private void AddRunForce()
     {
         this.r.AddForce
         (
-            this.forwardInt * this.maxSpeed * this.transform.forward + this.rightInt * this.maxSpeed * this.transform.right +
+            this.forwardInt * this.maxSpeed * this.transform.forward + 
+            this.rightInt * this.maxSpeed * this.transform.right +
             this.jumpForce * this.jumpInt * this.transform.up
         );
+    }
+
+    private void AddGravity()
+    {
+        if(!this._isJump) this.r.AddForce(gravity * -this.transform.up);
     }
 }

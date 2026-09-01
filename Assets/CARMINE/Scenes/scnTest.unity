@@ -249,12 +249,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf09349a94e11a54da3f9698acc3530a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::mchMovement
-  maxSpeed: 150
+  maxSpeed: 300
   curSpeed: 0
   forwardInt: 0
   rightInt: 0
   jumpForce: 400
-  maxJumpTime: 0.4
+  maxJumpTime: 0.35
   jumpBuffer: 0.125
   jumpInt: 0
   _isWalk: 0

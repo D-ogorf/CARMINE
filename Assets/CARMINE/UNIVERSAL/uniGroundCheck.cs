@@ -6,11 +6,11 @@ public class uniGroundCheck : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        _isGrounded = true;
+        this._isGrounded = true;
     }
 
     private void OnTriggerExit(Collider other)
     {
-        _isGrounded = false;
+        this._isGrounded = false;
     }
 }
