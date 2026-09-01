@@ -150,7 +150,7 @@ public class mchMovement : MonoBehaviour
     {
         this.r.AddForce
         (
-            this.forwardInt * this.maxSpeed * this.transform.forward + 
+            this.forwardInt * this.maxSpeed * this.transform.forward +
             this.rightInt * this.maxSpeed * this.transform.right +
             this.jumpForce * this.jumpInt * this.transform.up
         );
