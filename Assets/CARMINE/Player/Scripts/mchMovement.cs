@@ -6,6 +6,8 @@ using UnityEngine.InputSystem;
 
 public class mchMovement : MonoBehaviour
 {
+
+    //TODO: add stuff for bhopping
     const float gravity = 250;
     [Header("WALKING")]
     public float maxSpeed;
@@ -17,6 +19,9 @@ public class mchMovement : MonoBehaviour
     [SerializeField] private float jumpForce;
     [SerializeField] private float maxJumpTime;
     [SerializeField] private float jumpBuffer;
+    [SerializeField] private float coyoteTime;
+    [SerializeField] private sbyte jumpCountMax;
+    [SerializeField] private sbyte curJumpCountOffGround; // the purpose of this is to avoid players from jumping more than whats supposed to due to the way coyote time works
     public sbyte jumpInt;
 
     [Header("STATES")]
@@ -60,6 +65,7 @@ public class mchMovement : MonoBehaviour
         {
             timeGround += Time.deltaTime;
             timeAir = 0;
+            curJumpCountOffGround = 0;
         }
         else
         {
@@ -81,6 +87,8 @@ public class mchMovement : MonoBehaviour
         this._isWalk = Mathf.Abs(this.r.linearVelocity.x) > minVel || Mathf.Abs(this.r.linearVelocity.z) > minVel;
         this._isGround = this.g.GetComponent<uniGroundCheck>()._isGrounded;
         this._isJump = this.jumpInt != 0;
+        this._canJump = !this._isJump && this.timeAir <= this.coyoteTime && this.curJumpCountOffGround < this.jumpCountMax;
+        //im writing this while listening to nirvana - bleach so if something stupid is witten its kurt cobain's fault
     }
 
     private void MovementForIntCTRL()
@@ -110,7 +118,7 @@ public class mchMovement : MonoBehaviour
     private void JumpCTRL()
     {
         if(Input.GetKeyDown(this.s.jump)) StartCoroutine(JumpBuffer());
-        if(this._wantJump && this._isGround) StartCoroutine(Jumping()); // change to _canJump later
+        if(this._wantJump && this._canJump) StartCoroutine(Jumping());
     }
 
     private IEnumerator JumpBuffer()
@@ -137,6 +145,7 @@ public class mchMovement : MonoBehaviour
             if(t > .1f && this.r.linearVelocity.y == 0) break;
             yield return null;
         }
+        curJumpCountOffGround++;
         this.jumpInt = 0;
     }
 
@@ -160,4 +169,5 @@ public class mchMovement : MonoBehaviour
     {
         if(!this._isJump) this.r.AddForce(gravity * -this.transform.up);
     }
+
 }
