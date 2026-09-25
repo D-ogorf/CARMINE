@@ -260,6 +260,7 @@ MonoBehaviour:
   coyoteTime: 0.125
   jumpCountMax: 1
   curJumpCountOffGround: 0
+  maxTimeToBhop: 0.125
   jumpInt: 0
   _isWalk: 0
   _isGround: 0
@@ -267,6 +268,7 @@ MonoBehaviour:
   _wantJump: 0
   _isJump: 0
   timeGround: 0
+  auxTimeGround: 0
   timeAir: 0
 --- !u!54 &9841519
 Rigidbody:

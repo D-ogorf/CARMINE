@@ -22,6 +22,7 @@ public class mchMovement : MonoBehaviour
     [SerializeField] private float coyoteTime;
     [SerializeField] private sbyte jumpCountMax;
     [SerializeField] private sbyte curJumpCountOffGround; // the purpose of this is to avoid players from jumping more than whats supposed to due to the way coyote time works
+    [SerializeField] private float maxTimeToBhop;
     public sbyte jumpInt;
 
     [Header("STATES")]
@@ -33,6 +34,7 @@ public class mchMovement : MonoBehaviour
 
     [Header("TIMERS")]
     public float timeGround;
+    public float auxTimeGround;
     public float timeAir;
 
     private setKeybinds s;
@@ -61,17 +63,25 @@ public class mchMovement : MonoBehaviour
 
     private void AddTime()
     {
-        if(_isGround)
+        if(this._isGround)
         {
-            timeGround += Time.deltaTime;
-            timeAir = 0;
-            curJumpCountOffGround = 0;
+            this.timeGround += Time.deltaTime;
+            if(this.auxTimeGround <= maxTimeToBhop) auxTimeGround += Time.deltaTime; else auxTimeGround = 0;
+            this.timeAir = 0;
+            this.curJumpCountOffGround = 0;
+            LoopForBhop();
         }
         else
         {
-            timeAir += Time.deltaTime;
-            timeGround = 0;
+            this.timeAir += Time.deltaTime;
+            this.timeGround = 0;
+            this.auxTimeGround = 0;
         }
+    }
+
+    private void LoopForBhop()
+    {
+        
     }
 
     private void Update()
@@ -95,7 +105,7 @@ public class mchMovement : MonoBehaviour
     {
         if(!Input.GetKey(this.s.forward) && !Input.GetKey(this.s.backward) || Input.GetKey(this.s.forward) && Input.GetKey(this.s.backward))
         {
-            forwardInt = 0;
+            this.forwardInt = 0;
             return;
         }
         
@@ -145,7 +155,7 @@ public class mchMovement : MonoBehaviour
             if(t > .1f && this.r.linearVelocity.y == 0) break;
             yield return null;
         }
-        curJumpCountOffGround++;
+        this.curJumpCountOffGround++;
         this.jumpInt = 0;
     }
 
@@ -167,7 +177,7 @@ public class mchMovement : MonoBehaviour
 
     private void AddGravity()
     {
-        if(!this._isJump) this.r.AddForce(gravity * -this.transform.up);
+        if(!this._canJump && !this._isJump) this.r.AddForce(gravity * -this.transform.up);
     }
 
 }
