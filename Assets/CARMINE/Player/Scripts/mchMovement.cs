@@ -17,12 +17,12 @@ public class mchMovement : MonoBehaviour
 
     [Header("JUMPING")]
     [SerializeField] private float jumpForce;
+    [SerializeField] private sbyte jumpCountMax;
     [SerializeField] private float maxJumpTime;
     [SerializeField] private float jumpBuffer;
     [SerializeField] private float coyoteTime;
-    [SerializeField] private sbyte jumpCountMax;
-    [SerializeField] private sbyte curJumpCountOffGround; // the purpose of this is to avoid players from jumping more than whats supposed to due to the way coyote time works
     [SerializeField] private float maxTimeToBhop;
+    [SerializeField] private sbyte curJumpCountOffGround; // the purpose of this is to avoid players from jumping more than whats supposed to due to the way coyote time works
     public sbyte jumpInt;
 
     [Header("STATES")]
@@ -34,7 +34,6 @@ public class mchMovement : MonoBehaviour
 
     [Header("TIMERS")]
     public float timeGround;
-    public float auxTimeGround;
     public float timeAir;
 
     private setKeybinds s;
@@ -66,22 +65,14 @@ public class mchMovement : MonoBehaviour
         if(this._isGround)
         {
             this.timeGround += Time.deltaTime;
-            if(this.auxTimeGround <= maxTimeToBhop) auxTimeGround += Time.deltaTime; else auxTimeGround = 0;
             this.timeAir = 0;
             this.curJumpCountOffGround = 0;
-            LoopForBhop();
         }
         else
         {
             this.timeAir += Time.deltaTime;
             this.timeGround = 0;
-            this.auxTimeGround = 0;
         }
-    }
-
-    private void LoopForBhop()
-    {
-        
     }
 
     private void Update()
